@@ -32,110 +32,94 @@ def create_random_network(input_shape,
 
     return OrderedDict(layers), layers_dim
 
+
 def create_network(input_shape,
-                          width = 6, #number of neurons
-                          depth = 2, #number of layers
-                          activation_function = nn.ReLU()):
-
-
+                   width=6,  # number of neurons
+                   depth=2,  # number of layers
+                   activation_function=nn.ReLU(),
+                   dropout_rate=0.3):  # dropout probability
     layers = [('hidden1', nn.Linear(input_shape, width)),
-                  ('act1', activation_function)]
+              ('act1', activation_function),
+              ('dropout1', nn.Dropout(p=dropout_rate))]
 
     for i in range(depth):
+        layers.extend([(f'hidden{i + 2}', nn.Linear(width, width)),
+                       (f'act{i + 2}', activation_function),
+                       (f'dropout{i + 2}', nn.Dropout(p=dropout_rate))])
 
-        layers.extend([(f'hidden{i+2}', nn.Linear(width, width)),
-                       (f'act{i+2}', activation_function)])
-
-    layers.extend([(f'hidden{i+3}', nn.Linear(width, 1))])
-
+    layers.extend([(f'hidden{i + 3}', nn.Linear(width, 1))])
     return OrderedDict(layers)
 
+
 def _train_network(nn,
-                      X_train, y_train,
-                      X_val=None, y_val=None,
-                      X_test=None, y_test=None,
-                      epochs=100, batch_size=32, learning_rate=0.001,
-                      criterion=nn.MSELoss(), optimizer=optim.Adam, device='cpu',
-                      return_history =  False):
+                   X_train, y_train,
+                   X_val=None, y_val=None,
+                   X_test=None, y_test=None,
+                   epochs=100, batch_size=32, learning_rate=0.001,
+                   criterion=nn.MSELoss(), optimizer=optim.Adam, device='cpu',
+                   return_history=False):
+    train_dataset = TensorDataset(X_train, y_train)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
+    do_validation = False
+    if X_val is not None and y_val is not None:
+        X_val = X_val.to(device)
+        y_val = y_val.to(device)
+        do_validation = True
 
-        train_dataset = TensorDataset(X_train, y_train)
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        do_validation = False
-        if X_val is not None and y_val is not None:
-            X_val = X_val.to(device)
-            y_val = y_val.to(device)
-            do_validation = True
-        do_test = False
-        if X_test is not None and y_test is not None:
-            X_test = X_test.to(device)
-            y_test = y_test.to(device)
-            do_test = True
+    do_test = False
+    if X_test is not None and y_test is not None:
+        X_test = X_test.to(device)
+        y_test = y_test.to(device)
+        do_test = True
 
+    optimizer = optimizer(nn.model.parameters(), learning_rate)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
-        optimizer = optimizer(nn.model.parameters(), learning_rate)
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
-        # optim.lr_scheduler.OneCycleLR
-        # optim.lr_scheduler.CosineAnnealingLR
-        history = {'train_loss': [], 'val_loss': [], 'test_loss': []}
+    history = {'train_loss': [], 'val_loss': [], 'test_loss': []}
 
-        for epoch in range(epochs):
+    for epoch in range(epochs):
+        nn.model.train()  # Enables dropout during training
+        running_loss = 0.0
 
-            nn.model.train()
-            running_loss = 0.0
+        for inputs, targets in train_loader:
+            inputs = inputs.to(device)
+            targets = targets.to(device).view(-1, 1)
 
-            # Iterate through batches
-            for inputs, targets in train_loader:
-                inputs = inputs.to(device)
-                targets = targets.to(device).view(-1, 1)
+            optimizer.zero_grad()
+            outputs = nn.model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
 
-                # Zero the parameter gradients
-                optimizer.zero_grad()
+        epoch_train_loss = running_loss / len(train_loader)
+        history['train_loss'].append(epoch_train_loss)
 
-                # Forward pass - ensure inputs have correct shape
-                outputs = nn.model(inputs)
-                loss = criterion(outputs, targets)
+        # Validation step
+        if do_validation:
+            nn.model.eval()  # Disables dropout during evaluation
+            with torch.no_grad():
+                val_outputs = nn.model(X_val)
+                val_loss = criterion(val_outputs, y_val.view(-1, 1)).item()
+                history['val_loss'].append(val_loss)
+                scheduler.step(val_loss)
 
-                # Backward pass and optimize
-                loss.backward()
-                optimizer.step()
+        if do_test:
+            nn.model.eval()  # Disables dropout during evaluation
+            with torch.no_grad():
+                test_outputs = nn.model(X_test)
+                test_loss = criterion(test_outputs, y_test.view(-1, 1)).item()
+                history['test_loss'].append(test_loss)
 
-                running_loss += loss.item()
-
-            # Calculate average training loss for the epoch
-            epoch_train_loss = running_loss / len(train_loader)
-            history['train_loss'].append(epoch_train_loss)
-
-            # Validation step
+        if (epoch + 1) % 10 == 0 or epoch == 0:
             if do_validation:
-                nn.model.eval()
-                with torch.no_grad():
-                    val_outputs = nn.model(X_val)
-                    val_loss = criterion(val_outputs, y_val.view(-1, 1)).item()
-                    history['val_loss'].append(val_loss)
+                print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_train_loss:.4f}, Val Loss: {val_loss:.4f}")
+            else:
+                print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_train_loss:.4f}")
 
-                    # Learning rate scheduling based on validation loss
-                    scheduler.step(val_loss)
-
-            if do_test:
-                nn.model.eval()
-                with torch.no_grad():
-                    test_outputs = nn.model(X_test)
-                    test_loss = criterion(test_outputs, y_test.view(-1, 1)).item()
-                    history['test_loss'].append(test_loss)
-
-            # Print progress
-            if (epoch + 1) % 10 == 0 or epoch == 0:
-                if do_validation:
-                    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_train_loss:.4f}, Val Loss: {val_loss:.4f}")
-                else:
-                    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {epoch_train_loss:.4f}")
-
-
-        if return_history:
-
-            return history
-        else:
-
-            return nn
+    if return_history:
+        return history
+    else:
+        return nn
 
