@@ -62,7 +62,7 @@ def _run(seed, loader, idx):
 
     perf = rmse(y_test, y_pred)
 
-    logger(f'log/baseline_{day}.csv',
+    logger(f'log/baseline_dropout_{day}.csv',
            generation=1000,
            timing = end - start,
            run_info = [dataset , perf],
