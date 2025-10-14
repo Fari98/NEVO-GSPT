@@ -68,8 +68,7 @@ def _run( seed, loader):
                 y_test = y_test,
                 metric = rmse,
                 max_depth = None,
-                generations=2000
-                    ,
+                generations=2000,
                 elitism=True,
                 dataset_name=dataset,
                 log=1,
