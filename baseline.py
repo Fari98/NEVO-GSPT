@@ -21,7 +21,7 @@ size = [
     (3,244),
     (3,131)
 ]
-seeds = 30
+seeds = 5
 
 # for i, loader in enumerate(loaders):
 #
@@ -52,7 +52,7 @@ def _run(seed, loader, idx):
 
     for epoch, (train_loss, val_loss, test_loss) in enumerate(zip(net.history["train_loss"], net.history["val_loss"], net.history["test_loss"])):
 
-        logger(f'log/baseline_evo_{day}.csv',
+        logger(f'log/baseline_dropout_evo_{day}.csv',
                generation=epoch,
                timing=0,
                run_info=[dataset , train_loss, val_loss, test_loss],

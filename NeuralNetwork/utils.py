@@ -37,7 +37,7 @@ def create_network(input_shape,
                    width=6,  # number of neurons
                    depth=2,  # number of layers
                    activation_function=nn.ReLU(),
-                   dropout_rate=0.3):  # dropout probability
+                   dropout_rate=0.1):  # dropout probability
     layers = [('hidden1', nn.Linear(input_shape, width)),
               ('act1', activation_function),
               ('dropout1', nn.Dropout(p=dropout_rate))]
