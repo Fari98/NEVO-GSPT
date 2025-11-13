@@ -4,7 +4,7 @@ from joblib import Parallel, delayed
 
 for i, loader in enumerate(loaders):
 
-    _ = Parallel(n_jobs=-1)(
+    _ = Parallel(n_jobs=3)(
         delayed(_run)(
             seed,
             loader,
