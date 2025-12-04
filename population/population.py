@@ -19,6 +19,7 @@ class Population:
 
         self.fitnesses = [ind.fitness for ind in self.individuals]
 
+
     def find_elite(self, minimization = True):
 
         if minimization:

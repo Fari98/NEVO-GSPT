@@ -63,6 +63,8 @@ class DSLM:
         np.random.seed(self.seed)
         random.seed(self.seed)
 
+        self.y_test = y_test
+
         start = time.time()
 
         # Initialize the population

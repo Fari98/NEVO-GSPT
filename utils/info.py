@@ -1,6 +1,7 @@
 import os
 import csv
 from filelock import FileLock
+from utils.utils import binarized_mcc, binarized_bce, binarized_rmse
 
 def get_log_info(optimizer, log):
     base_log = [
@@ -13,9 +14,13 @@ def get_log_info(optimizer, log):
 
     if log == 1:
         return base_log
-    # elif log == 2:
-    #
-    #     return base_log + [[individual.full_perf1 for individual in optimizer.elites]]
+    elif log == 2:
+
+
+
+        return base_log + [binarized_rmse()(optimizer.y_test, optimizer.population.elite.test_semantics),
+                           binarized_mcc()(optimizer.y_test, optimizer.population.elite.test_semantics),
+                           binarized_bce()(optimizer.y_test, optimizer.population.elite.test_semantics)]
     #
     # else:
     #     return base_log + [[individual.representations for individual in optimizer.elites]]

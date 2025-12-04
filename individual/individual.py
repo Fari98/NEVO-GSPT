@@ -41,6 +41,7 @@ class Individual():
 
             self.test_fitness = metric(y, self.test_semantics)
 
+
     def create_hidden_input(self, X, test=False):
 
         if test:
