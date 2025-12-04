@@ -1,7 +1,8 @@
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
-from utils.utils import StandardScaler, train_test_split, uniform_random_step_generator, binarized_rmse, binarized_bce, binarized_mcc
+from utils.utils import StandardScaler, train_test_split, uniform_random_step_generator
+from utils.evaluators import binarized_rmse, binarized_bce, binarized_mcc
 from population.initializers import initialize_population
 from population.selection_algorithms import torunament_selection
 from individual.mutation_operators import deflate_mutation, inflate_mutation
@@ -20,7 +21,11 @@ loaders = [
 ]
 
 resnet_versions = ['rn18', 'rn34', 'rn50']
-metrics = [binarized_rmse(), binarized_bce(), binarized_mcc()]
+metrics = [
+        binarized_rmse(),
+           binarized_bce(),
+           binarized_mcc()
+           ]
 sizes = [10, 50, 100, 250, 500]
 # sizes = [500]
 # m_steps = [0.2, 0.002]

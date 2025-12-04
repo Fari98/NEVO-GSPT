@@ -1,7 +1,7 @@
 import os
 import csv
 from filelock import FileLock
-from utils.utils import binarized_mcc, binarized_bce, binarized_rmse
+from utils.evaluators import binarized_mcc, binarized_bce, binarized_rmse
 
 def get_log_info(optimizer, log):
     base_log = [
