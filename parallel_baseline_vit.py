@@ -66,6 +66,15 @@ print("Downloading tuberculosis dataset...")
 dataset_paths['tuberculosis'] = kagglehub.dataset_download("raddar/tuberculosis-chest-xrays-shenzhen")
 print(f"  -> {dataset_paths['tuberculosis']}")
 
+# Pre-download ViT model weights to avoid concurrent download conflicts
+print("\nPre-loading ViT model weights...")
+from torchvision.models import vit_b_16, ViT_B_16_Weights
+import torch
+_ = vit_b_16(weights=ViT_B_16_Weights.IMAGENET1K_V1)
+del _  # Free memory
+torch.cuda.empty_cache() if torch.cuda.is_available() else None
+print("  -> ViT weights cached")
+
 print("\nStarting parallel execution...")
 
 # Execute all tasks in parallel
