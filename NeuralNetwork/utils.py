@@ -37,7 +37,9 @@ def create_network(input_shape,
                    width=6,  # number of neurons
                    depth=2,  # number of layers
                    activation_function=nn.ReLU(),
-                   dropout_rate=0.1):  # dropout probability
+                   dropout_rate=0.1,  # dropout probability
+                   num_outputs=1,  # number of output neurons (1 for regression/binary classification)
+                   output_activation=None):  # optional output activation (e.g., nn.Sigmoid() for classification)
     layers = [('hidden1', nn.Linear(input_shape, width)),
               ('act1', activation_function),
               ('dropout1', nn.Dropout(p=dropout_rate))]
@@ -47,7 +49,11 @@ def create_network(input_shape,
                        (f'act{i + 2}', activation_function),
                        (f'dropout{i + 2}', nn.Dropout(p=dropout_rate))])
 
-    layers.extend([(f'hidden{i + 3}', nn.Linear(width, 1))])
+    layers.extend([(f'hidden{i + 3}', nn.Linear(width, num_outputs))])
+
+    if output_activation is not None:
+        layers.extend([('output_act', output_activation)])
+
     return OrderedDict(layers)
 
 

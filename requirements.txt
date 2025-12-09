@@ -6,6 +6,7 @@ MarkupSafe==3.0.2
 mpmath==1.3.0
 networkx==3.4.2
 numpy==2.2.5
+kagglehub
 pandas==2.2.3
 pillow==11.2.1
 python-dateutil==2.9.0.post0

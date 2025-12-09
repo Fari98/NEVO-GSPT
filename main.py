@@ -24,12 +24,12 @@ resnet_versions = ['rn18', 'rn34', 'rn50']
 metrics = [
         binarized_rmse(),
            binarized_bce(),
-           binarized_mcc()
+           # binarized_mcc()
            ]
 sizes = [10, 50, 100, 250, 500]
 # sizes = [500]
 # m_steps = [0.2, 0.002]
-seeds = 5
+seeds = 30
 
 
 def _run( seed, loader, resnet_v, metric, size):
