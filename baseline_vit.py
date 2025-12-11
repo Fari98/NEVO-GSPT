@@ -330,9 +330,9 @@ def _run(seed, dataset_name, sample_size, dataset_path=None, freeze_backbone=Tru
     y_test_np = torch.cat(all_targets).numpy()
 
     # Calculate metrics
-    rmse = binarized_rmse(y_test_np, y_pred)
-    bce = binarized_bce(y_test_np, y_pred)
-    mcc = binarized_mcc(y_test_np, y_pred)
+    rmse = binarized_rmse()(y_test_np, y_pred)
+    bce = binarized_bce()(y_test_np, y_pred)
+    mcc = binarized_mcc()(y_test_np, y_pred)
 
     # Log final results
     logger(f'log/baseline_vit_{day}.csv',
