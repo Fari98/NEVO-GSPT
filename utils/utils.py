@@ -97,8 +97,6 @@ def train_test_split(X, y, p_test=0.3, shuffle=True, indices_only=False, seed=0,
             class_mask = stratify_tensor == class_label
             class_indices = torch.where(class_mask)[0]
 
-            # Shuffle indices for this class
-            torch.manual_seed(seed)
             shuffled_indices = class_indices[torch.randperm(len(class_indices))]
 
             # Split this class

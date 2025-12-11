@@ -44,6 +44,7 @@ class DSLM:
         y_train,
         X_test = None,
         y_test = None,
+        multiclass = False,
         metric = root_mean_squared_error,
         max_depth = None,
         generations=20,
@@ -52,12 +53,14 @@ class DSLM:
         log=0,
         log_path = None,
         verbose=0,
-        n_jobs = 1
+        n_jobs = 1,
+        n_classes = 1
     ):
         """
         """
 
         self.log = log
+        self.n_classes = n_classes
         # setting the seeds
         torch.manual_seed(self.seed)
         np.random.seed(self.seed)
@@ -70,7 +73,7 @@ class DSLM:
         # Initialize the population
         self.population = self.initializer(self.pop_size, n_jobs)
 
-        self.population = Population([Individual([ind], ind.forward(X_train), ind.forward(X_test)) for ind in self.population])
+        self.population = Population([Individual([ind], ind.forward(X_train), ind.forward(X_test), multiclass = multiclass, n_classes = n_classes) for ind in self.population])
 
         # evaluating the intial population
         self.population.calculate_semantics(X_train)
@@ -129,7 +132,7 @@ class DSLM:
                         offspring = self.inflate_mutator(parent)
 
                     else:
-                        offspring = self.deflate_mutator(parent)
+                        offspring = self.deflate_mutator(parent, multiclass, n_classes)
 
                     offs_pop.append(offspring)
 

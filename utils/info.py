@@ -2,6 +2,8 @@ import os
 import csv
 from filelock import FileLock
 from utils.evaluators import binarized_mcc, binarized_bce, binarized_rmse
+from sklearn.metrics import matthews_corrcoef
+import torch
 
 def get_log_info(optimizer, log):
     base_log = [
@@ -21,6 +23,11 @@ def get_log_info(optimizer, log):
         return base_log + [binarized_rmse()(optimizer.y_test, optimizer.population.elite.test_semantics),
                            binarized_mcc()(optimizer.y_test, optimizer.population.elite.test_semantics),
                            binarized_bce()(optimizer.y_test, optimizer.population.elite.test_semantics)]
+
+    elif log == 3:
+
+        return base_log + [matthews_corrcoef(optimizer.y_test,
+                                             torch.argmax(torch.nn.Softmax(dim = 1)(optimizer.population.elite.test_semantics), dim = 1).detach().cpu().numpy())]
     #
     # else:
     #     return base_log + [[individual.representations for individual in optimizer.elites]]

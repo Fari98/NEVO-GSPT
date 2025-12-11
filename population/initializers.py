@@ -10,6 +10,7 @@ import torch.optim as optim
 def initialize_population(X_train, y_train,
                           maximum_width = 6,
                           maximum_depth = 2,
+                          n_classes=1,
                           activation_functions = [nn.ReLU()],
                           pretrain_part = 1,
                           X_val=None, y_val=None,
@@ -21,7 +22,7 @@ def initialize_population(X_train, y_train,
     def initializer(pop_size,  n_jobs = 1):
 
         population = [NeuralNetwork(*create_random_network(X_train.shape[1], maximum_width,
-                                              maximum_depth, activation_functions)) for _ in range(pop_size)]
+                                              maximum_depth, activation_functions, n_classes)) for _ in range(pop_size)]
 
         num_to_train = int(pretrain_part * len(population))
 

@@ -8,12 +8,13 @@ import torch
 
 
 
-def inflate_mutation(X_train,  ms_generator = uniform_random_step_generator(0, 1), X_test = None, neuron_probability = 1):
+def inflate_mutation(X_train,  ms_generator = uniform_random_step_generator(0, 1), X_test = None, neuron_probability = 1, n_classes = 1):
 
     input_dim = X_train.shape[1]
 
     def mutator(individual):
-        block = create_random_block(input_dim, individual.structure[0].layers_dim, neuron_probability=neuron_probability)
+        block = create_random_block(input_dim, individual.layers_dim,
+                                    neuron_probability=neuron_probability, n_classes=n_classes)
         block = Block(block, individual.hidden_inputs, ms_generator(), individual.hidden_test_inputs)
 
 
@@ -24,22 +25,70 @@ def inflate_mutation(X_train,  ms_generator = uniform_random_step_generator(0, 1
                            torch.cat((individual.total_train_semantics, block.forward(X_train)), dim = 1),
                            total_test_semantics=test_semantics,
                            hidden_inputs=individual.hidden_inputs,
-                           hidden_test_inputs=individual.hidden_test_inputs)
+                           hidden_test_inputs=individual.hidden_test_inputs,
+                           multiclass=n_classes>1,
+                           n_classes=n_classes,
+                           layers_dim=individual.layers_dim)
 
     return mutator
 
-def deflate_mutation(individual):
+def deflate_mutation(individual, multiclass = False, n_classes = 1):
 
-    deflate_idx = random.randint(1, individual.size-2) #does not make sense to remove the last layer since that individual is already in the population
+    # For multiclass, we need to remove n_classes columns at a time to maintain proper dimensions
+    if multiclass and n_classes > 1:
+        # Calculate number of blocks
+        total_features = individual.total_train_semantics.shape[1]
+        n_blocks = total_features // n_classes
 
-    test_semantics = torch.cat((individual.total_test_semantics[:, :deflate_idx],
-                                  individual.total_test_semantics[:, deflate_idx+1:]), dim = 1) if (
-                                    individual.total_test_semantics is not None) else None
+        if n_blocks <= 1:
+            # Can't deflate if only 1 block
+            return individual
 
-    return Individual( structure = [*individual.structure[:deflate_idx], *individual.structure[deflate_idx+1:]],
-                       total_train_semantics=torch.cat((individual.total_train_semantics[:, :deflate_idx],
-                                  individual.total_train_semantics[:, deflate_idx+1:]), dim = 1),
+        # Select a random block to remove (0-indexed)
+        block_idx = random.randint(1, n_blocks - 1)
+
+        # Calculate the column indices to remove
+        start_col = block_idx * n_classes
+        end_col = start_col + n_classes
+
+        # Remove the block's columns from semantics
+        train_semantics_parts = [
+            individual.total_train_semantics[:, :start_col],
+            individual.total_train_semantics[:, end_col:]
+        ]
+        train_semantics = torch.cat([p for p in train_semantics_parts if p.shape[1] > 0], dim=1)
+
+        if individual.total_test_semantics is not None:
+            test_semantics_parts = [
+                individual.total_test_semantics[:, :start_col],
+                individual.total_test_semantics[:, end_col:]
+            ]
+            test_semantics = torch.cat([p for p in test_semantics_parts if p.shape[1] > 0], dim=1)
+        else:
+            test_semantics = None
+
+        # Remove the block from structure
+        new_structure = [*individual.structure[:block_idx], *individual.structure[block_idx+1:]]
+
+    else:
+        # Original logic for regression/binary classification
+        deflate_idx = random.randint(1, individual.size-2)
+
+        test_semantics = torch.cat((individual.total_test_semantics[:, :deflate_idx],
+                                      individual.total_test_semantics[:, deflate_idx+1:]), dim = 1) if (
+                                        individual.total_test_semantics is not None) else None
+
+        train_semantics = torch.cat((individual.total_train_semantics[:, :deflate_idx],
+                                      individual.total_train_semantics[:, deflate_idx+1:]), dim = 1)
+
+        new_structure = [*individual.structure[:deflate_idx], *individual.structure[deflate_idx+1:]]
+
+    return Individual( structure = new_structure,
+                       total_train_semantics=train_semantics,
                        total_test_semantics= test_semantics,
                        hidden_inputs=individual.hidden_inputs,
-                       hidden_test_inputs = individual.hidden_test_inputs
+                       hidden_test_inputs = individual.hidden_test_inputs,
+                       multiclass=multiclass,
+                       n_classes=n_classes,
+                       layers_dim=individual.layers_dim
                         )

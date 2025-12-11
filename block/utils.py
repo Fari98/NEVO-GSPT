@@ -12,7 +12,8 @@ class Linear(torch.nn.Module):
 def create_random_block(input_shape,
                         layers_dim,
                         activation_functions = [nn.ReLU()],
-                        neuron_probability = 1):
+                        neuron_probability = 1,
+                        n_classes = 1):
 
 
     layer = nn.Linear(input_shape, 1, bias = False)
@@ -34,12 +35,12 @@ def create_random_block(input_shape,
         if p < neuron_probability:
             layer.weight.data.uniform_(-1.0, 1.0)
         else:
-            layer.weight.data.fill_(0) #todo adjust to [0, 0, ... 1]
+            layer.weight.data.fill_(0)
             layer.weight.data[0][-1] = 1
         # layer.bias.data.fill_(0)
 
         if i == (len(layers_dim)-1): #last layer
-            layers.extend([(f'hidden{i + 2}', layer),
+            layers.extend([(f'hidden{i + 2}',  nn.Linear(1+dim, n_classes, bias=False)),
                            (f'act{i + 2}', nn.Tanh())])
         else:
             if p < neuron_probability:

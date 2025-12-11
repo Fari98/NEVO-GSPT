@@ -1,14 +1,15 @@
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
-from utils.utils import StandardScaler, train_test_split, uniform_random_step_generator
-from utils.evaluators import binarized_rmse, binarized_bce, binarized_mcc
+from utils.utils import StandardScaler, uniform_random_step_generator
+from utils.evaluators import binarized_rmse, binarized_bce, binarized_mcc, cross_entropy
 from population.initializers import initialize_population
 from population.selection_algorithms import torunament_selection
 from individual.mutation_operators import deflate_mutation, inflate_mutation
 from torch import nn
 from torch import optim
 import datetime
+from sklearn.model_selection import train_test_split
 from UnifiedModel.UnifiedModel import UnifiedModel
 from utils.info import base_logger
 
@@ -16,15 +17,12 @@ now = datetime.datetime.now()
 day = now.strftime("%Y%m%d")
 
 loaders = [
-            load_brain_tumor,
-           load_tuberculosis
+           load_mc_tuberculosis
 ]
 
 resnet_versions = ['rn18', 'rn34', 'rn50']
 metrics = [
-        binarized_rmse(),
-           binarized_bce(),
-           # binarized_mcc()
+        cross_entropy
            ]
 sizes = [10, 50, 100, 250, 500]
 # sizes = [500]
@@ -47,11 +45,11 @@ def _run( seed, loader, resnet_v, metric, size):
         torch.Tensor(y_test).squeeze(), torch.Tensor(X_train_nn), torch.Tensor(X_val),
         torch.Tensor(y_train_nn).squeeze(), torch.Tensor(y_val).squeeze())
 
-
     optimizer = DSLM(initializer = initialize_population(X_train_nn,
                                                          y_train_nn,
                                                          maximum_width=16,
                                                          maximum_depth=3,
+                                                         n_classes = y.unique().shape[0],
                                                          activation_functions=[nn.ReLU()],
                                                          pretrain_part=0.5,
                                                          X_val=X_val, y_val=y_val,
@@ -62,8 +60,9 @@ def _run( seed, loader, resnet_v, metric, size):
                                                          ),
                     selector = torunament_selection(2),
                     inflate_mutator = inflate_mutation(X_train,
-                                                       ms_generator=uniform_random_step_generator(0, 0.002), #todo set as median of y -> overfits(input is scaled) torch.median(y_train).item()
-                                                       X_test=X_test),
+                                                       ms_generator=uniform_random_step_generator(0, 0.002),
+                                                       X_test=X_test,
+                                                       n_classes=y.unique().shape[0]),
                     deflate_mutator = deflate_mutation,
                     crossover=None,
                     p_m = 1,
@@ -78,15 +77,17 @@ def _run( seed, loader, resnet_v, metric, size):
                 y_train = y_train,
                 X_test = X_test,
                 y_test = y_test,
+                multiclass=True,
                 metric = metric,
                 max_depth = None,
                 generations=2000,
                 elitism=True,
                 dataset_name=dataset,
-                log=2,
-                log_path = f'log/{day}_test.csv' , #f'log/{day}_nopretrain.csv'
+                log=3,
+                log_path = f'log/{day}_mc.csv' , #f'log/{day}_nopretrain.csv'
                 verbose=1,
-                n_jobs = -1
+                n_jobs = -1,
+                n_classes = y.unique().shape[0]
             )
 
     # final_model = UnifiedModel(optimizer.population.elite.structure)

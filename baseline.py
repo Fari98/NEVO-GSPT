@@ -220,12 +220,17 @@ def _run(seed, loader, resnet_v, sample_size):
     width = max(size['width'][key_bce], size['width'][key_brmse])
 
     # Create network for binary classification with sigmoid output
-    net = NeuralNetwork(create_network(X.shape[1], width=int(width), depth=int(depth),
+    net = NeuralNetwork(create_network(X.shape[1], width=1, depth=int(width)*int(depth),
                                        num_outputs=1, output_activation=nn.Sigmoid()))
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, p_test=1-(sample_size/X.shape[0]), seed=seed, stratify=y)
+    X_train,  X_test, y_train, y_test = train_test_split(X, y, test_size=size, random_state = seed, stratify=y)
 
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, p_test=0.2, seed=seed, stratify=y_train)
+    X_train_nn, X_val, y_train_nn, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state = seed, stratify=y_train)
+
+    X_train, X_test, y_train, y_test, X_train_nn, X_val, y_train_nn, y_val = (
+        torch.Tensor(X_train), torch.Tensor(X_test), torch.Tensor(y_train).squeeze(),
+        torch.Tensor(y_test).squeeze(), torch.Tensor(X_train_nn), torch.Tensor(X_val),
+        torch.Tensor(y_train_nn).squeeze(), torch.Tensor(y_val).squeeze())
 
     start = time.time()
 

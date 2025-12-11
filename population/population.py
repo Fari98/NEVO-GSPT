@@ -9,9 +9,9 @@ class Population:
 
         self.parameters = sum([ind.size for ind in self.individuals])
 
-    def calculate_semantics(self, X, test=False):
+    def calculate_semantics(self, X, test=False, multiclass = False):
 
-        [ind.calculate_semantics(X, test) for ind in self.individuals]
+        [ind.calculate_semantics(X, test, multiclass) for ind in self.individuals]
 
     def evaluate(self, y, metric = root_mean_squared_error, test = False):
 

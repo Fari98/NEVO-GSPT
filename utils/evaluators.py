@@ -111,3 +111,7 @@ def binarized_mcc(binarizer=modified_sigmoid()):
         mcc_score = matthews_corrcoef(y_true_binary, my_pred_binary)
         return -mcc_score
     return mcc
+
+
+def cross_entropy(y_true, y_pred):
+    return torch.nn.functional.cross_entropy(y_pred, y_true.long()).item()
