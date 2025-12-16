@@ -8,7 +8,10 @@ from collections import OrderedDict
 def create_random_network(input_shape,
                           maximum_width = 6, #number of neurons
                           maximum_depth = 2, #number of layers
-                          activation_functions = [nn.ReLU()]):
+                          activation_functions = [nn.ReLU()],
+                          num_outputs=1,  # number of output neurons (1 for regression/binary classification)
+                          output_activation=None
+                          ):
 
 
     previous_width = random.randint(1, maximum_width)
@@ -28,7 +31,10 @@ def create_random_network(input_shape,
 
         previous_width = layer_width
 
-    layers.extend([(f'hidden{i+3}', nn.Linear(previous_width, 1))])
+    layers.extend([(f'hidden{i+3}', nn.Linear(previous_width, num_outputs))])
+
+    if output_activation is not None:
+        layers.extend([('output_act', output_activation)])
 
     return OrderedDict(layers), layers_dim
 
@@ -57,7 +63,7 @@ def create_network(input_shape,
     return OrderedDict(layers)
 
 
-def _train_network(nn,
+def _train_network(network,
                    X_train, y_train,
                    X_val=None, y_val=None,
                    X_test=None, y_test=None,
@@ -79,21 +85,29 @@ def _train_network(nn,
         y_test = y_test.to(device)
         do_test = True
 
-    optimizer = optimizer(nn.model.parameters(), learning_rate)
+    optimizer = optimizer(network.model.parameters(), learning_rate)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
+
+    # Detect if we're doing multiclass classification (CrossEntropyLoss)
+    is_multiclass = isinstance(criterion, nn.CrossEntropyLoss)
 
     history = {'train_loss': [], 'val_loss': [], 'test_loss': []}
 
     for epoch in range(epochs):
-        nn.model.train()  # Enables dropout during training
+        network.model.train()  # Enables dropout during training
         running_loss = 0.0
 
         for inputs, targets in train_loader:
             inputs = inputs.to(device)
-            targets = targets.to(device).view(-1, 1)
+            # For multiclass (CrossEntropyLoss), keep targets as 1D tensor of class indices
+            # For regression/binary, reshape to (-1, 1)
+            if is_multiclass:
+                targets = targets.to(device).long()
+            else:
+                targets = targets.to(device).view(-1, 1)
 
             optimizer.zero_grad()
-            outputs = nn.model(inputs)
+            outputs = network.model(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
@@ -104,18 +118,24 @@ def _train_network(nn,
 
         # Validation step
         if do_validation:
-            nn.model.eval()  # Disables dropout during evaluation
+            network.model.eval()  # Disables dropout during evaluation
             with torch.no_grad():
-                val_outputs = nn.model(X_val)
-                val_loss = criterion(val_outputs, y_val.view(-1, 1)).item()
+                val_outputs = network.model(X_val)
+                if is_multiclass:
+                    val_loss = criterion(val_outputs, y_val).item()
+                else:
+                    val_loss = criterion(val_outputs, y_val.view(-1, 1)).item()
                 history['val_loss'].append(val_loss)
                 scheduler.step(val_loss)
 
         if do_test:
-            nn.model.eval()  # Disables dropout during evaluation
+            network.model.eval()  # Disables dropout during evaluation
             with torch.no_grad():
-                test_outputs = nn.model(X_test)
-                test_loss = criterion(test_outputs, y_test.view(-1, 1)).item()
+                test_outputs = network.model(X_test)
+                if is_multiclass:
+                    test_loss = criterion(test_outputs, y_test).item()
+                else:
+                    test_loss = criterion(test_outputs, y_test.view(-1, 1)).item()
                 history['test_loss'].append(test_loss)
 
         if (epoch + 1) % 10 == 0 or epoch == 0:
@@ -127,5 +147,5 @@ def _train_network(nn,
     if return_history:
         return history
     else:
-        return nn
+        return network
 

@@ -1,7 +1,8 @@
 from NeuralNetwork.utils import create_network
 from NeuralNetwork.NeuralNetwork import NeuralNetwork
 from datasets.data_loader_resnet import *
-from utils.utils import StandardScaler, train_test_split
+from utils.utils import StandardScaler
+from sklearn.model_selection import train_test_split
 from utils.evaluators import binarized_mcc, binarized_rmse, binarized_bce
 from utils.info import logger
 from torch import nn
@@ -221,25 +222,29 @@ def _run(seed, loader, resnet_v, sample_size):
 
     # Create network for binary classification with sigmoid output
     net = NeuralNetwork(create_network(X.shape[1], width=1, depth=int(width)*int(depth),
-                                       num_outputs=1, output_activation=nn.Sigmoid()))
+                                       num_outputs=1, output_activation=None))
 
-    X_train,  X_test, y_train, y_test = train_test_split(X, y, test_size=size, random_state = seed, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sample_size, random_state=seed, stratify=y)
+    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=seed, stratify=y_train)
 
-    X_train_nn, X_val, y_train_nn, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state = seed, stratify=y_train)
-
-    X_train, X_test, y_train, y_test, X_train_nn, X_val, y_train_nn, y_val = (
-        torch.Tensor(X_train), torch.Tensor(X_test), torch.Tensor(y_train).squeeze(),
-        torch.Tensor(y_test).squeeze(), torch.Tensor(X_train_nn), torch.Tensor(X_val),
-        torch.Tensor(y_train_nn).squeeze(), torch.Tensor(y_val).squeeze())
+    # Convert to tensors
+    X_train = torch.Tensor(X_train)
+    X_test = torch.Tensor(X_test)
+    y_train = torch.Tensor(y_train).long()  # CrossEntropyLoss expects long
+    y_test = torch.Tensor(y_test).long()
+    # X_train_nn = torch.Tensor(X_train_nn)
+    X_val = torch.Tensor(X_val)
+    # y_train_nn = torch.Tensor(y_train_nn).long()
+    y_val = torch.Tensor(y_val).long()
 
     start = time.time()
 
     # Train with BCELoss for binary classification (sigmoid already in network)
-    net.train_network(X_train, y_train,
-                      X_val = X_val, y_val=y_val,
-                      X_test=X_test, y_test=y_test,
-                      epochs = 1000, batch_size=32,
-                      criterion=nn.BCELoss())
+    net.train_network(X_train, y_train.float(),
+                      X_val = X_val, y_val=y_val.float(),
+                      X_test=X_test, y_test=y_test.float(),
+                      epochs = 2000, batch_size=32,
+                      criterion=nn.BCEWithLogitsLoss())
 
     end = time.time()
 
@@ -254,7 +259,7 @@ def _run(seed, loader, resnet_v, sample_size):
     y_pred = net.forward(X_test).flatten()
 
     logger(f'log/baseline_dropout_{day}.csv',
-           generation=1000,
+           generation=2000,
            timing = end - start,
            run_info = [dataset , binarized_rmse()(y_test, y_pred), binarized_bce()(y_test, y_pred),  binarized_mcc()(y_test, y_pred)],
            seed = seed)

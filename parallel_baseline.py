@@ -21,7 +21,7 @@ def get_completed_dataset_seeds():
                 # Check if generation == 1000 (final entry)
                 for dataset_name, group in df.groupby(0):
                     max_generation = group.iloc[:, -1].max()
-                    if max_generation >= 1000:
+                    if max_generation >= 2000:
                         completed.add(dataset_name)
         except Exception as e:
             print(f"Warning: Could not read log file: {e}")

@@ -1,7 +1,8 @@
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
-from utils.utils import StandardScaler, train_test_split, uniform_random_step_generator
+from utils.utils import StandardScaler, uniform_random_step_generator
+from sklearn.model_selection import train_test_split
 from utils.evaluators import binarized_rmse, binarized_bce, binarized_mcc
 from population.initializers import initialize_population
 from population.selection_algorithms import torunament_selection
@@ -14,6 +15,7 @@ from utils.info import base_logger
 
 now = datetime.datetime.now()
 day = now.strftime("%Y%m%d")
+# day = "20251211"
 
 loaders = [
             load_brain_tumor,
@@ -84,7 +86,7 @@ def _run( seed, loader, resnet_v, metric, size):
                 elitism=True,
                 dataset_name=dataset,
                 log=2,
-                log_path = f'log/{day}_test.csv' , #f'log/{day}_nopretrain.csv'
+                log_path = f'log/{day}.csv' , #f'log/{day}_nopretrain.csv'
                 verbose=1,
                 n_jobs = -1
             )

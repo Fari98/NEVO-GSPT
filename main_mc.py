@@ -27,7 +27,7 @@ metrics = [
 sizes = [10, 50, 100, 250, 500]
 # sizes = [500]
 # m_steps = [0.2, 0.002]
-seeds = 30
+seeds = 5
 
 
 def _run( seed, loader, resnet_v, metric, size):

@@ -1,4 +1,4 @@
-from main import _run, loaders, seeds, metrics, resnet_versions, sizes
+from main_mc import _run, loaders, seeds, metrics, resnet_versions, sizes
 from joblib import Parallel, delayed
 import pandas as pd
 import os
@@ -6,7 +6,6 @@ from datetime import datetime
 
 now = datetime.now()
 day = now.strftime("%Y%m%d")
-# day = "20251211"
 log_path = f'log/{day}.csv'
 
 
