@@ -14,8 +14,8 @@ from UnifiedModel.UnifiedModel import UnifiedModel
 from utils.info import base_logger
 
 now = datetime.datetime.now()
-# day = now.strftime("%Y%m%d")-1
-day = "20251215"
+day = now.strftime("%Y%m%d")
+# day = "20251215"
 
 loaders = [
             load_brain_tumor,
