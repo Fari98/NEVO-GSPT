@@ -224,7 +224,7 @@ def _run(seed, loader, resnet_v, sample_size):
     net = NeuralNetwork(create_network(X.shape[1], width=1, depth=int(width)*int(depth),
                                        num_outputs=1, output_activation=None))
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sample_size, random_state=seed, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=sample_size, random_state=seed, stratify=y)
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=seed, stratify=y_train)
 
     # Convert to tensors

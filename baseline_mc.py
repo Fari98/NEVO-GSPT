@@ -23,12 +23,23 @@ sample_sizes = [10, 50, 100, 250, 500]
 
 # Baseline architecture configurations for multiclass
 # Using reasonable defaults - can be tuned based on evolutionary results
-baseline_config = {
-    'width': 16,
-    'depth': 3
-}
+config = {'mc_tuberculosis_rn18_100_cross_entropy': {'width': 4, 'depth': 641},
+ 'mc_tuberculosis_rn18_10_cross_entropy': {'width': 4, 'depth': 601},
+ 'mc_tuberculosis_rn18_250_cross_entropy': {'width': 4, 'depth': 589},
+ 'mc_tuberculosis_rn18_500_cross_entropy': {'width': 4, 'depth': 640},
+ 'mc_tuberculosis_rn18_50_cross_entropy': {'width': 4, 'depth': 594},
+ 'mc_tuberculosis_rn34_100_cross_entropy': {'width': 4, 'depth': 632},
+ 'mc_tuberculosis_rn34_10_cross_entropy': {'width': 4, 'depth': 605},
+ 'mc_tuberculosis_rn34_250_cross_entropy': {'width': 4, 'depth': 591},
+ 'mc_tuberculosis_rn34_500_cross_entropy': {'width': 4, 'depth': 632},
+ 'mc_tuberculosis_rn34_50_cross_entropy': {'width': 4, 'depth': 593},
+ 'mc_tuberculosis_rn50_100_cross_entropy': {'width': 4, 'depth': 541},
+ 'mc_tuberculosis_rn50_10_cross_entropy': {'width': 4, 'depth': 512},
+ 'mc_tuberculosis_rn50_250_cross_entropy': {'width': 4, 'depth': 576},
+ 'mc_tuberculosis_rn50_500_cross_entropy': {'width': 4, 'depth': 598},
+ 'mc_tuberculosis_rn50_50_cross_entropy': {'width': 4, 'depth': 573}}
 
-seeds = 30
+seeds = 5
 
 
 def _run(seed, loader, resnet_v, sample_size):
@@ -52,8 +63,8 @@ def _run(seed, loader, resnet_v, sample_size):
     X = StandardScaler().fit_transform(X)
 
     # Use baseline configuration
-    width = baseline_config['width']
-    depth = baseline_config['depth']
+    width = config['dataset']['width']
+    depth = config['dataset']['depth']
 
     # Create network for multiclass classification (no output activation, use CrossEntropyLoss)
     net = NeuralNetwork(create_network(X.shape[1],

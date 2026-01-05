@@ -14,6 +14,48 @@ def uniform_random_step_generator(lower, upper):
 import torch
 
 
+def normalize_block_semantics(block_semantics, block_idx, n_classes, multiclass=True):
+    """
+    Normalize block semantics for multiclass classification.
+
+    First block (block_idx=0): Apply softmax only
+    Other blocks (block_idx>0): Apply softmax - mean(softmax)
+
+    Parameters:
+    -----------
+    block_semantics : torch.Tensor
+        Shape [batch, n_classes] - raw outputs from a block
+    block_idx : int
+        Index of the block (0 for first block)
+    n_classes : int
+        Number of classes
+    multiclass : bool
+        Whether this is multiclass classification
+
+    Returns:
+    --------
+    torch.Tensor
+        Normalized semantics [batch, n_classes]
+    """
+    if not multiclass or block_semantics is None:
+        # For non-multiclass, return as-is
+        return block_semantics
+
+    # Apply softmax along the class dimension
+    # Shape: [batch, n_classes]
+    softmax_output = torch.nn.functional.softmax(block_semantics, dim=1)
+
+    if block_idx == 0:
+        # First block: return softmax only (no mean subtraction)
+        return softmax_output
+    else:
+        # Other blocks: subtract mean to center at 0
+        # Shape: [batch, 1]
+        mean_output = torch.mean(softmax_output, dim=1, keepdim=True)
+        # Shape: [batch, n_classes]
+        return softmax_output - mean_output
+
+
 class StandardScaler:
 
     def __init__(self, mean=None, std=None, epsilon=1e-7):

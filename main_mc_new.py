@@ -14,8 +14,8 @@ from UnifiedModel.UnifiedModel import UnifiedModel
 from utils.info import base_logger
 
 now = datetime.datetime.now()
-day = now.strftime("%Y%m%d")
-# day = "20251216"
+# day = now.strftime("%Y%m%d")
+day = "20251216"
 
 loaders = [
            load_mc_tuberculosis
@@ -61,7 +61,7 @@ def _run( seed, loader, resnet_v, metric, size):
                                                          ),
                     selector = torunament_selection(2),
                     inflate_mutator = inflate_mutation(X_train,
-                                                       ms_generator=uniform_random_step_generator(0, 0.02),
+                                                       ms_generator=uniform_random_step_generator(0, 0.2),
                                                        X_test=X_test,
                                                        n_classes=y.unique().shape[0]),
                     deflate_mutator = deflate_mutation,
@@ -72,6 +72,7 @@ def _run( seed, loader, resnet_v, metric, size):
                     p_xo=0,
                     pop_size=100,
                     seed=seed,
+                    normalize_semantics=True  # NEW: Enable normalized semantics
                 )
 
     optimizer.solve(X_train = X_train,
@@ -85,7 +86,7 @@ def _run( seed, loader, resnet_v, metric, size):
                 elitism=True,
                 dataset_name=dataset,
                 log=3,
-                log_path = f'log/{day}_mc.csv' , #f'log/{day}_nopretrain.csv'
+                log_path = f'log/{day}_mc_new_0_2.csv' , # NEW: Different log file name
                 verbose=1,
                 n_jobs = -1,
                 n_classes = y.unique().shape[0]
@@ -118,3 +119,15 @@ def _run( seed, loader, resnet_v, metric, size):
 
 
     return 'done'
+
+
+if __name__ == '__main__':
+    # Run experiments
+    for loader in loaders:
+        for resnet_v in resnet_versions:
+            for metric in metrics:
+                for size in sizes:
+                    for seed in range(seeds):
+                        print(f"\nRunning: {loader.__name__} - {resnet_v} - {metric.__name__} - size={size} - seed={seed}")
+                        _run(seed, loader, resnet_v, metric, size)
+                        print(f"Completed: {loader.__name__} - {resnet_v} - {metric.__name__} - size={size} - seed={seed}")

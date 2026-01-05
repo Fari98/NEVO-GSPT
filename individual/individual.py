@@ -5,13 +5,15 @@ from sklearn.metrics import root_mean_squared_error
 class Individual():
 
     def __init__(self, structure,  total_train_semantics = None, total_test_semantics = None,
-                 hidden_inputs = None, hidden_test_inputs = None, multiclass = False, n_classes = 1, layers_dim = None):
+                 hidden_inputs = None, hidden_test_inputs = None, multiclass = False, n_classes = 1, layers_dim = None,
+                 normalize_semantics = False):
 
         self.structure = structure
         self.size = sum([block.size for block in self.structure])
         self.length = len(structure)
         self.multiclass = multiclass
         self.n_classes = n_classes
+        self.normalize_semantics = normalize_semantics
 
         # Store layers_dim from the first neural network in the structure
         if layers_dim is None:
@@ -26,9 +28,12 @@ class Individual():
         self.total_train_semantics = total_train_semantics
         self.total_test_semantics = total_test_semantics
 
-        self.train_semantics = None if self.total_train_semantics is None else self._compute_semantics(self.total_train_semantics, multiclass, n_classes)
-
-        self.test_semantics = None if self.total_test_semantics is None else self._compute_semantics(self.total_test_semantics, multiclass, n_classes)
+        if normalize_semantics:
+            self.train_semantics = None if self.total_train_semantics is None else self._compute_semantics_normalized(self.total_train_semantics, multiclass, n_classes)
+            self.test_semantics = None if self.total_test_semantics is None else self._compute_semantics_normalized(self.total_test_semantics, multiclass, n_classes)
+        else:
+            self.train_semantics = None if self.total_train_semantics is None else self._compute_semantics(self.total_train_semantics, multiclass, n_classes)
+            self.test_semantics = None if self.total_test_semantics is None else self._compute_semantics(self.total_test_semantics, multiclass, n_classes)
 
         self.hidden_inputs = hidden_inputs
         self.hidden_test_inputs = hidden_test_inputs
@@ -66,19 +71,66 @@ class Individual():
             else:
                 return total_semantics
 
+    def _compute_semantics_normalized(self, total_semantics, multiclass, n_classes):
+        """
+        Compute final semantics from pre-normalized blocks.
+
+        When normalize_semantics=True, blocks are already normalized when stored:
+        - First block: softmax(block_0)
+        - Other blocks: softmax(block_i) - mean(softmax(block_i))
+
+        This method just reshapes and sums the pre-normalized blocks.
+
+        For regression/binary: falls back to standard computation
+        """
+        if not multiclass:
+            # For non-multiclass, use standard computation
+            return torch.sum(total_semantics, dim=1)
+        else:
+            # Blocks are already normalized, just reshape and sum
+            if len(total_semantics.shape) >= 3:
+                # Already 3D [batch, n_blocks, n_classes]
+                # Just sum across blocks
+                return torch.sum(total_semantics, dim=1)
+            elif len(total_semantics.shape) == 2:
+                # 2D [batch, n_blocks*n_classes] - need to reshape then sum
+                batch_size = total_semantics.shape[0]
+                total_features = total_semantics.shape[1]
+
+                # Calculate number of blocks
+                n_blocks = total_features // n_classes
+
+                if n_blocks * n_classes == total_features:
+                    # Reshape to [batch, n_blocks, n_classes] and sum across blocks
+                    reshaped = total_semantics.view(batch_size, n_blocks, n_classes)
+                    return torch.sum(reshaped, dim=1)
+                else:
+                    # Dimension mismatch - just return as-is (shouldn't happen)
+                    return total_semantics
+            else:
+                return total_semantics
+
 
     def calculate_semantics(self, X, test, multiclass = False):
-        
+
         if test and self.total_test_semantics is None:
             self.total_test_semantics = [block.calculate_semantics(X, test) for block in self.structure]
-            self.test_semantics = torch.sum(self.total_test_semantics, dim = 1) if not multiclass else \
-            (torch.sum(self.total_test_semantics, dim = 2) if len(self.total_test_semantics.shape) >= 3 else self.total_test_semantics)
-        
+
+            if self.normalize_semantics:
+                self.test_semantics = self._compute_semantics_normalized(self.total_test_semantics, multiclass, self.n_classes)
+            else:
+                self.test_semantics = torch.sum(self.total_test_semantics, dim = 1) if not multiclass else \
+                (torch.sum(self.total_test_semantics, dim = 2) if len(self.total_test_semantics.shape) >= 3 else self.total_test_semantics)
+
         elif not test and self.total_train_semantics is None:
             self.total_train_semantics = [block.calculate_semantics(X, test) for block in self.structure]
-            self.train_semantics = torch.sum(self.total_train_semantics, dim=1) if not multiclass else \
-                (torch.sum(self.total_train_semantics, dim=2) if len(
-                    self.total_train_semantics.shape) >= 3 else self.total_train_semantics)
+
+            if self.normalize_semantics:
+                self.train_semantics = self._compute_semantics_normalized(self.total_train_semantics, multiclass, self.n_classes)
+            else:
+                self.train_semantics = torch.sum(self.total_train_semantics, dim=1) if not multiclass else \
+                    (torch.sum(self.total_train_semantics, dim=2) if len(
+                        self.total_train_semantics.shape) >= 3 else self.total_train_semantics)
 
     def evaluate(self, y, metric = root_mean_squared_error, test = False):
 

@@ -5,6 +5,7 @@ import torch
 from individual.individual import Individual
 
 from utils.info import logger, verbose_reporter, get_log_info
+from utils.utils import normalize_block_semantics
 
 from population.population import Population
 from sklearn.metrics import root_mean_squared_error
@@ -24,6 +25,7 @@ class DSLM:
         p_xo=0,
         pop_size=100,
         seed=0,
+        normalize_semantics=False,
     ):
 
         self.selector = selector
@@ -37,6 +39,7 @@ class DSLM:
         self.initializer = initializer
         self.pop_size = pop_size
         self.seed = seed
+        self.normalize_semantics = normalize_semantics
 
     def solve(
         self,
@@ -73,7 +76,21 @@ class DSLM:
         # Initialize the population
         self.population = self.initializer(self.pop_size, n_jobs)
 
-        self.population = Population([Individual([ind], ind.forward(X_train), ind.forward(X_test), multiclass = multiclass, n_classes = n_classes) for ind in self.population])
+        # Create individuals with normalized semantics if requested
+        individuals = []
+        for ind in self.population:
+            train_sem = ind.forward(X_train)
+            test_sem = ind.forward(X_test) if X_test is not None else None
+
+            # Normalize semantics if requested (first block, so block_idx=0)
+            if self.normalize_semantics and multiclass:
+                train_sem = normalize_block_semantics(train_sem, block_idx=0, n_classes=n_classes, multiclass=multiclass)
+                if test_sem is not None:
+                    test_sem = normalize_block_semantics(test_sem, block_idx=0, n_classes=n_classes, multiclass=multiclass)
+
+            individuals.append(Individual([ind], train_sem, test_sem, multiclass=multiclass, n_classes=n_classes, normalize_semantics=self.normalize_semantics))
+
+        self.population = Population(individuals)
 
         # evaluating the intial population
         self.population.calculate_semantics(X_train)
