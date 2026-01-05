@@ -218,22 +218,22 @@ def _run(seed, loader, resnet_v, size):
     # print(f"    Matching Networks - Train MCC: {mcc_matching_train:.4f}, Test MCC: {mcc_matching_test:.4f}")
 
     # MAML
-    # print("  Running MAML...")
-    # pred_maml_train, pred_maml_test = maml(X_train, y_train, X_test, y_test, n_classes, inner_lr=0.01, outer_steps=20)
-    # mcc_maml_train = matthews_corrcoef(y_train.numpy(), pred_maml_train.numpy())
-    # mcc_maml_test = matthews_corrcoef(y_test.numpy(), pred_maml_test.numpy())
-    # results['maml_train_mcc'] = mcc_maml_train
-    # results['maml_test_mcc'] = mcc_maml_test
-    # print(f"    MAML - Train MCC: {mcc_maml_train:.4f}, Test MCC: {mcc_maml_test:.4f}")
-    #
-    # # Transductive Fine-Tuning
-    # print("  Running Transductive Fine-Tuning...")
-    # pred_transductive_train, pred_transductive_test = transductive_finetune(X_train, y_train, X_test, y_test, n_classes, epochs=100, lr=0.001)
-    # mcc_transductive_train = matthews_corrcoef(y_train.numpy(), pred_transductive_train.numpy())
-    # mcc_transductive_test = matthews_corrcoef(y_test.numpy(), pred_transductive_test.numpy())
-    # results['transductive_train_mcc'] = mcc_transductive_train
-    # results['transductive_test_mcc'] = mcc_transductive_test
-    # print(f"    Transductive Fine-Tuning - Train MCC: {mcc_transductive_train:.4f}, Test MCC: {mcc_transductive_test:.4f}")
+    print("  Running MAML...")
+    pred_maml_train, pred_maml_test = maml(X_train, y_train, X_test, y_test, n_classes, inner_lr=0.01, outer_steps=20)
+    mcc_maml_train = matthews_corrcoef(y_train.numpy(), pred_maml_train.numpy())
+    mcc_maml_test = matthews_corrcoef(y_test.numpy(), pred_maml_test.numpy())
+    results['maml_train_mcc'] = mcc_maml_train
+    results['maml_test_mcc'] = mcc_maml_test
+    print(f"    MAML - Train MCC: {mcc_maml_train:.4f}, Test MCC: {mcc_maml_test:.4f}")
+
+    # Transductive Fine-Tuning
+    print("  Running Transductive Fine-Tuning...")
+    pred_transductive_train, pred_transductive_test = transductive_finetune(X_train, y_train, X_test, y_test, n_classes, epochs=100, lr=0.001)
+    mcc_transductive_train = matthews_corrcoef(y_train.numpy(), pred_transductive_train.numpy())
+    mcc_transductive_test = matthews_corrcoef(y_test.numpy(), pred_transductive_test.numpy())
+    results['transductive_train_mcc'] = mcc_transductive_train
+    results['transductive_test_mcc'] = mcc_transductive_test
+    print(f"    Transductive Fine-Tuning - Train MCC: {mcc_transductive_train:.4f}, Test MCC: {mcc_transductive_test:.4f}")
 
     # Log results
     log_path = f'log/{day}_fs_baseline.csv'
@@ -243,12 +243,12 @@ def _run(seed, loader, resnet_v, size):
     return results
 
 
-# if __name__ == '__main__':
-#     # Run experiments
-#     for loader in [loaders[0]]:
-#         for resnet_v in [resnet_versions[0]]:
-#             for size in [sizes[0]]:
-#                 for seed in range(1):
-#                     _run(seed, loader, resnet_v, size)
-#
-#     print("All experiments completed!")
+if __name__ == '__main__':
+    # Run experiments
+    for loader in [loaders[0]]:
+        for resnet_v in [resnet_versions[0]]:
+            for size in [sizes[0]]:
+                for seed in range(1):
+                    _run(seed, loader, resnet_v, size)
+
+    print("All experiments completed!")

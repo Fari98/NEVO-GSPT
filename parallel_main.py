@@ -5,8 +5,8 @@ import os
 from datetime import datetime
 
 now = datetime.now()
-# day = now.strftime("%Y%m%d")
-day = "20251215"
+day = now.strftime("%Y%m%d")
+# day = "20251215"
 log_path = f'log/{day}.csv'
 
 
