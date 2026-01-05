@@ -51,6 +51,9 @@ def _run( seed, loader, resnet_v, metric, size):
         torch.Tensor(y_test).squeeze(), None, None,
         None, None)
 
+    X_train_nn = X_train
+    y_train_nn = y_train
+
     optimizer = DSLM(initializer = initialize_population(X_train_nn,
                                                          y_train_nn,
                                                          maximum_width=16,
