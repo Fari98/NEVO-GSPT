@@ -37,14 +37,19 @@ def _run( seed, loader, resnet_v, metric, size):
     dataset = loader.__name__.split("load_")[-1] + '_' + resnet_v + '_' + str(size) + '_' + metric.__name__
     X = StandardScaler().fit_transform(X)
 
-    X_train,  X_test, y_train, y_test = train_test_split(X, y, train_size=size, random_state = seed, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=size, random_state=seed, stratify=y)
 
-    X_train_nn, X_val, y_train_nn, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state = seed, stratify=y_train)
+    # X_train_nn, X_val, y_train_nn, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state = seed, stratify=y_train)
+
+    # X_train, X_test, y_train, y_test, X_train_nn, X_val, y_train_nn, y_val = (
+    #     torch.Tensor(X_train), torch.Tensor(X_test), torch.Tensor(y_train).squeeze(),
+    #     torch.Tensor(y_test).squeeze(), torch.Tensor(X_train_nn), torch.Tensor(X_val),
+    #     torch.Tensor(y_train_nn).squeeze(), torch.Tensor(y_val).squeeze())
 
     X_train, X_test, y_train, y_test, X_train_nn, X_val, y_train_nn, y_val = (
         torch.Tensor(X_train), torch.Tensor(X_test), torch.Tensor(y_train).squeeze(),
-        torch.Tensor(y_test).squeeze(), torch.Tensor(X_train_nn), torch.Tensor(X_val),
-        torch.Tensor(y_train_nn).squeeze(), torch.Tensor(y_val).squeeze())
+        torch.Tensor(y_test).squeeze(), None, None,
+        None, None)
 
     optimizer = DSLM(initializer = initialize_population(X_train_nn,
                                                          y_train_nn,
