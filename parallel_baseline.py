@@ -42,7 +42,15 @@ def generate_tasks():
             for size in sample_sizes:
                 # Skip if this dataset combination is already completed
                 if not is_task_completed(loader, version, size):
-                    for seed in range(seeds):
+                    for seed in range(10,30): #todo range(10, 30)
+
+
+
+
+
+
+
+
                         yield (seed, loader, version, size)
 
 

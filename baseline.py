@@ -200,7 +200,7 @@ size = {'depth': {'brain_tumor_rn18_100_bce': 479.0,
   'tuberculosis_rn50_50_brmse': 3.0,
   'tuberculosis_rn50_50_mcc': 3.0}}
 
-seeds = 30
+seeds = 10
 
 # for i, loader in enumerate(loaders):
 #
