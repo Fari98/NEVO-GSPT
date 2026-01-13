@@ -331,6 +331,6 @@ if __name__ == "__main__":
         metrics=[binarized_rmse()],
         sizes=[10, 50],
         seeds=3,
-        param_grid=SMALL_PARAM_GRID,
-        n_jobs=4  # Use 4 parallel workers
+        param_grid=PARAM_GRID,
+        n_jobs=-1  # Use 4 parallel workers
     )
