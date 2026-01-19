@@ -5,7 +5,7 @@ Demonstrates the core algorithm without multiple datasets or complex logging.
 
 import torch
 from torch import nn, optim
-from DSLM import DSLM
+from GSPT import GSPT
 from datasets.data_loader import load_bioav
 from utils.utils import StandardScaler, train_test_split, uniform_random_step_generator, rmse
 from population.initializers import initialize_population
@@ -42,7 +42,7 @@ def main():
     )
 
     # Create and run optimizer
-    optimizer = DSLM(
+    optimizer = GSPT(
         initializer=population,
         selector=torunament_selection(2),
         inflate_mutator=inflate_mutation(X_train, ms_generator=uniform_random_step_generator(0, 2), X_test=X_test),
