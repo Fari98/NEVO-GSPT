@@ -6,7 +6,7 @@ You can find an example usage script in example.py.
 
 ## Citing 
 
-If you use NEVO-GSPT in a scientific publication, please consider citing the following papers:
+If you use NEVO-GSPT in a scientific publication, please consider citing the following paper:
 
 ```latex
 @misc{farinati2026nevogsptpopulationbasedneuralnetwork,
