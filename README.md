@@ -1,3 +1,9 @@
+# NEVO-GSPT
+
+NeuroEVOlution through Geometric Semantic perturbation and Population-based Training (NEVO-GSPT) is a population-based neural network evolution method, that adapts the inflate and deflate geometric semantic mutations of GSGP and SLIM to NeuroEvolution.
+
+You can find an example usage script in example.py.
+
 ## Citing 
 
 If you use NEVO-GSPT in a scientific publication, please consider citing the following papers:
