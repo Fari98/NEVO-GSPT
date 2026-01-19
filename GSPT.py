@@ -10,7 +10,7 @@ from population.population import Population
 from sklearn.metrics import root_mean_squared_error
 
 
-class DSLM:
+class GSPT:
     def __init__(
         self,
         initializer,
