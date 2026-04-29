@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
@@ -37,7 +43,8 @@ def _run( seed, loader, resnet_v, metric, size):
     dataset = loader.__name__.split("load_")[-1] + '_' + resnet_v + '_' + str(size) + '_' + metric.__name__
     X = StandardScaler().fit_transform(X)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=size, random_state=seed, stratify=y)
+
+    X_train,  X_test, y_train, y_test = train_test_split(X, y, train_size=size, random_state = seed, stratify=y)
 
     # X_train_nn, X_val, y_train_nn, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state = seed, stratify=y_train)
 
@@ -69,7 +76,7 @@ def _run( seed, loader, resnet_v, metric, size):
                                                          ),
                     selector = torunament_selection(2),
                     inflate_mutator = inflate_mutation(X_train,
-                                                       ms_generator=uniform_random_step_generator(0, 0.2),
+                                                       ms_generator=uniform_random_step_generator(0, 0.02),
                                                        X_test=X_test,
                                                        n_classes=y.unique().shape[0]),
                     deflate_mutator = deflate_mutation,
@@ -80,7 +87,6 @@ def _run( seed, loader, resnet_v, metric, size):
                     p_xo=0,
                     pop_size=100,
                     seed=seed,
-                    normalize_semantics=True  # NEW: Enable normalized semantics
                 )
 
     optimizer.solve(X_train = X_train,
@@ -94,7 +100,7 @@ def _run( seed, loader, resnet_v, metric, size):
                 elitism=True,
                 dataset_name=dataset,
                 log=3,
-                log_path = f'log/{day}_mc_new_0_2.csv' , # NEW: Different log file name
+                log_path = os.path.join(LOG_DIR, f'{day}_mc.csv'),
                 verbose=1,
                 n_jobs = -1,
                 n_classes = y.unique().shape[0]
@@ -127,15 +133,3 @@ def _run( seed, loader, resnet_v, metric, size):
 
 
     return 'done'
-
-
-if __name__ == '__main__':
-    # Run experiments
-    for loader in loaders:
-        for resnet_v in resnet_versions:
-            for metric in metrics:
-                for size in sizes:
-                    for seed in range(seeds):
-                        print(f"\nRunning: {loader.__name__} - {resnet_v} - {metric.__name__} - size={size} - seed={seed}")
-                        _run(seed, loader, resnet_v, metric, size)
-                        print(f"Completed: {loader.__name__} - {resnet_v} - {metric.__name__} - size={size} - seed={seed}")

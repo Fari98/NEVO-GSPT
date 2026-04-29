@@ -1,0 +1,4 @@
+*.pyc
+/__pycache__
+datasets/resnet_features/brain_tumor_rn50_gaussian_1.0.csv
+*.csv

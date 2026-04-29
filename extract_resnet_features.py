@@ -306,6 +306,103 @@ def extract_and_save_features(dataset_class, dataset_path, output_name, model_na
     return X, y
 
 
+# ---------------------------------------------------------------------------
+# Public helpers for image-space noise experiments
+# ---------------------------------------------------------------------------
+
+_RESNET_MAP = {'rn18': 'resnet18', 'rn34': 'resnet34', 'rn50': 'resnet50'}
+
+_RAW_TRANSFORM = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),          # → [C, H, W] float32 in [0, 1], no Normalize
+])
+
+_IMAGENET_NORMALIZE = transforms.Normalize(
+    mean=[0.485, 0.456, 0.406],
+    std=[0.229, 0.224, 0.225]
+)
+
+
+def load_raw_images(loader_name: str, kaggle_path: str = None):
+    """
+    Load raw images as pixel tensors without ImageNet normalization so that
+    noise can be applied in pixel space before feature extraction.
+
+    Parameters
+    ----------
+    loader_name : str
+        One of 'load_brain_tumor', 'load_tuberculosis', 'load_mc_tuberculosis'.
+    kaggle_path : str or None
+        Local path to the dataset root. If None, downloads via kagglehub.
+
+    Returns
+    -------
+    images : np.ndarray, shape (N, 3, 224, 224), dtype float32, values in [0, 1]
+    y      : np.ndarray, shape (N,), dtype int32
+    """
+    if loader_name == 'load_brain_tumor':
+        if kaggle_path is None:
+            kaggle_path = kagglehub.dataset_download("ahmedhamada0/brain-tumor-detection")
+        dataset = BrainTumorDataset(kaggle_path)
+    elif loader_name == 'load_tuberculosis':
+        if kaggle_path is None:
+            kaggle_path = kagglehub.dataset_download("raddar/tuberculosis-chest-xrays-shenzhen")
+        dataset = TuberculosisDataset(kaggle_path)
+    elif loader_name == 'load_mc_tuberculosis':
+        if kaggle_path is None:
+            kaggle_path = kagglehub.dataset_download("raddar/tuberculosis-chest-xrays-shenzhen")
+        dataset = TuberculosisMulticlassDataset(kaggle_path)
+    else:
+        raise ValueError(f"Unknown loader_name: '{loader_name}'")
+
+    images_labels = dataset.get_images_and_labels()
+    if not images_labels:
+        raise RuntimeError(f"No images found for '{loader_name}' at {kaggle_path}")
+
+    imgs, labels = [], []
+    for img_path, label in images_labels:
+        try:
+            img = Image.open(img_path).convert('RGB')
+            imgs.append(_RAW_TRANSFORM(img).numpy())   # [3, 224, 224] float32 in [0, 1]
+            labels.append(label)
+        except Exception as e:
+            print(f"Warning: skipping {img_path}: {e}")
+
+    return np.array(imgs, dtype=np.float32), np.array(labels, dtype=np.int32)
+
+
+def extract_features_from_tensors(images: np.ndarray, resnet_v: str,
+                                   device: str = 'cpu', batch_size: int = 64) -> np.ndarray:
+    """
+    Apply ImageNet normalization and extract ResNet features from a batch of
+    raw image arrays (in [0, 1], before normalization).
+
+    Parameters
+    ----------
+    images    : np.ndarray, shape (N, 3, 224, 224), float32 in [0, 1]
+    resnet_v  : str — 'rn18', 'rn34', or 'rn50'
+    device    : str
+    batch_size: int
+
+    Returns
+    -------
+    np.ndarray, shape (N, 512) for rn18/rn34 or (N, 2048) for rn50, dtype float32
+    """
+    model_name = _RESNET_MAP[resnet_v]
+    extractor = ResNetFeatureExtractor(model_name=model_name, device=device)
+
+    all_features = []
+    for start in range(0, len(images), batch_size):
+        batch = torch.from_numpy(images[start:start + batch_size]).to(device)
+        # Apply ImageNet normalization (noise was applied before this step)
+        batch = torch.stack([_IMAGENET_NORMALIZE(b) for b in batch])
+        with torch.no_grad():
+            feats = extractor.model(batch)           # [B, C, 1, 1]
+        all_features.append(feats.squeeze(-1).squeeze(-1).cpu().numpy())  # [B, C]
+
+    return np.concatenate(all_features, axis=0).astype(np.float32)
+
+
 def main():
     # Set device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'

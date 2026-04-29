@@ -1,13 +1,17 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+
 from main import _run, loaders, seeds, metrics, resnet_versions, sizes
 from joblib import Parallel, delayed
 import pandas as pd
-import os
 from datetime import datetime
 
 now = datetime.now()
 day = now.strftime("%Y%m%d")
-# day = "20251215"
-log_path = f'log/{day}.csv'
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+log_path = os.path.join(LOG_DIR, f'{day}.csv')
 
 
 def get_completed_dataset_seeds():

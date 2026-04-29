@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))  # repo root
+sys.path.insert(0, _here)                             # sibling imports
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
@@ -86,7 +92,7 @@ def _run( seed, loader, resnet_v, metric, size):
                 elitism=True,
                 dataset_name=dataset,
                 log=2,
-                log_path = f'log/{day}.csv' , #f'log/{day}_nopretrain.csv'
+                log_path = os.path.join(LOG_DIR, f'{day}.csv'),
                 verbose=1,
                 n_jobs = -1
             )

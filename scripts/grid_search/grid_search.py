@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 import torch
 from DSLM import DSLM
 from datasets.data_loader_resnet import *
@@ -191,7 +197,7 @@ def grid_search(
     if log_path is None:
         now = datetime.datetime.now()
         day = now.strftime("%Y%m%d")
-        log_path = f'log/grid_search_{day}.csv'
+        log_path = os.path.join(LOG_DIR, f'grid_search_{day}.csv')
 
     # Generate all parameter combinations
     param_names = list(param_grid.keys())

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where py *)",
+      "Bash(where python3.exe)",
+      "Read(//usr/**)",
+      "Bash(py -c ' *)",
+      "Bash(py *)",
+      "Bash(\"C:\\\\Users\\\\dfarinati\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import pandas; print\\(pandas.__version__\\)\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\dfarinati\\\\AppData\\\\Local\\\\\" | Where-Object { $_.Name -match \"python|conda|mamba|miniforge|anaconda\" } | Select-Object Name, FullName)",
+      "PowerShell(Get-Command *)"
+    ]
+  }
+}

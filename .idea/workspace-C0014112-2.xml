@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c72400db-3c9a-43c1-b598-ba55ad0a6595" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/DSLM.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DSLM.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/baseline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline_mc.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/baseline_mc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline_vit.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/baseline_vit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datasets/data_loader_resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasets/data_loader_resnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_resnet_features.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_resnet_features.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fs_baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/fs_baseline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grid_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/grid_search/grid_search.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log/20251209.csv" beforeDir="false" afterPath="$PROJECT_DIR$/log/20251209.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dslm/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_mc.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dslm/main_mc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_mc_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dslm/main_mc_new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/parallel_baseline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_baseline_mc.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/parallel_baseline_mc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_fs_baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/baselines/parallel_fs_baseline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_grid_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/grid_search/parallel_grid_search.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dslm/parallel_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parallel_main_mc.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/dslm/parallel_main_mc.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Fari98&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Fari98/NEVO-GSPT.git&quot;,
+    &quot;accountId&quot;: &quot;42e9619d-3970-453d-89c9-616e19f0a6a4&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2wiWLAsiPwOAV2WCvNR4hshj6D5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.baseline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.extract_noisy_features.executor&quot;: &quot;Run&quot;,
+    &quot;Python.extract_resnet_features.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.fs_baseline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.inspect_datasets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.main_mc.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_mc_new.executor&quot;: &quot;Run&quot;,
+    &quot;Python.parallel_baseline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.parallel_baseline_vit.executor&quot;: &quot;Run&quot;,
+    &quot;Python.parallel_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.parallel_main_2.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.parallel_main_mc.executor&quot;: &quot;Run&quot;,
+    &quot;Python.parallel_main_mc_new.executor&quot;: &quot;Run&quot;,
+    &quot;Python.runtime_comparison.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.test_baseline_mc.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Gecco2026&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/farinati.davide/OneDrive - NOVAIMS/dottorato/Trieste/SLIM NN/DSLM&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM" />
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM\population" />
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM\individual" />
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM\utils" />
+      <recent name="C:\Users\dfarinati\OneDrive - NOVAIMS\dottorato\Trieste\SLIM NN\DSLM\operators" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.extract_noisy_features">
+    <configuration name="extract_noisy_features" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSLM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/extract_noisy_features.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="fs_baseline" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSLM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/fs_baseline.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="parallel_baseline" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSLM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/parallel_baseline.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="parallel_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSLM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/parallel_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="parallel_main_mc" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DSLM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/parallel_main_mc.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.extract_noisy_features" />
+        <item itemvalue="Python.parallel_baseline" />
+        <item itemvalue="Python.fs_baseline" />
+        <item itemvalue="Python.parallel_main" />
+        <item itemvalue="Python.parallel_main_mc" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-1f77c24022e5-d902c0275401-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-252.26830.99" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c72400db-3c9a-43c1-b598-ba55ad0a6595" name="Changes" comment="" />
+      <created>1746524815429</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1746524815429</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.csv" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/fs_baseline.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

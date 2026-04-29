@@ -1,12 +1,17 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+
 from fs_baseline import _run, loaders, seeds, resnet_versions, sizes
 from joblib import Parallel, delayed
 import pandas as pd
-import os
 from datetime import datetime
 
 now = datetime.now()
 day = now.strftime("%Y%m%d")
-log_path = f'log/{day}_fs_baseline.csv'
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+log_path = os.path.join(LOG_DIR, f'{day}_fs_baseline.csv')
 
 
 def get_completed_tasks():

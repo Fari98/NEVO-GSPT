@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,7 +13,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import matthews_corrcoef
 import datetime
 import pandas as pd
-import os
 
 now = datetime.datetime.now()
 day = now.strftime("%Y%m%d")
@@ -236,7 +241,7 @@ def _run(seed, loader, resnet_v, size):
     print(f"    Transductive Fine-Tuning - Train MCC: {mcc_transductive_train:.4f}, Test MCC: {mcc_transductive_test:.4f}")
 
     # Log results
-    log_path = f'log/{day}_fs_baseline.csv'
+    log_path = os.path.join(LOG_DIR, f'{day}_fs_baseline.csv')
     log_results(log_path, results)
 
     print(f"Completed: {dataset} - seed={seed}\n")

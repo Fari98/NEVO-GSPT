@@ -1,17 +1,21 @@
-from main_mc import _run, loaders, seeds, metrics, resnet_versions, sizes
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+
+from baseline import _run, loaders, seeds, resnet_versions, sample_sizes
 from joblib import Parallel, delayed
 import pandas as pd
-import os
 from datetime import datetime
 
 now = datetime.now()
 day = now.strftime("%Y%m%d")
-# day = "20251216"
-log_path = f'log/{day}.csv'
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+log_path = os.path.join(LOG_DIR, f'baseline_dropout_{day}.csv')
 
 
 def get_completed_dataset_seeds():
-    """Read log file and extract dataset-seed combinations that reached generation 1000"""
+    """Read log file and extract dataset-seed combinations that are completed"""
     completed = set()
 
     if os.path.exists(log_path):
@@ -19,7 +23,7 @@ def get_completed_dataset_seeds():
             df = pd.read_csv(log_path, header=None)
             if len(df) > 0:
                 # First column is dataset_name, last column is generation
-                # Group by dataset_name and check if max generation >= 1000
+                # Check if generation == 1000 (final entry)
                 for dataset_name, group in df.groupby(0):
                     max_generation = group.iloc[:, -1].max()
                     if max_generation >= 2000:
@@ -30,22 +34,29 @@ def get_completed_dataset_seeds():
     return completed
 
 
-def is_task_completed(loader, version, metric, size):
+def is_task_completed(loader, version, size):
     """Check if a dataset combination has already been computed"""
-    dataset_name = loader.__name__.split("load_")[-1] + '_' + version + '_' + str(size) + '_' + metric.__name__
+    dataset_name = loader.__name__.split("load_")[-1] + '_' + version + '_' + str(size)
     return dataset_name in completed_tasks
 
 
 def generate_tasks():
-    """Generate all (seed, loader, version, metric, size) combinations, skipping completed ones"""
+    """Generate all (seed, loader, version, size) combinations, skipping completed ones"""
     for loader in loaders:
-        for metric in metrics:
-            for version in resnet_versions:
-                for size in sizes:
-                    # Skip if this dataset combination is already completed
-                    if not is_task_completed(loader, version, metric, size):
-                        for seed in range(seeds):
-                            yield (seed, loader, version, metric, size)
+        for version in resnet_versions:
+            for size in sample_sizes:
+                # Skip if this dataset combination is already completed
+                if not is_task_completed(loader, version, size):
+                    for seed in range(10,30): #todo range(10, 30)
+
+
+
+
+
+
+
+
+                        yield (seed, loader, version, size)
 
 
 # Load completed dataset combinations
@@ -57,8 +68,7 @@ _ = Parallel(n_jobs=-1)(
         seed,
         loader,
         version,
-        metric,
         size
-    ) for seed, loader, version, metric, size in generate_tasks()
+    ) for seed, loader, version, size in generate_tasks()
 )
 

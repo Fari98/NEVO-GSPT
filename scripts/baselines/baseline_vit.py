@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 import torch
 import torch.nn as nn
 from torchvision.models import vit_b_16, ViT_B_16_Weights
@@ -300,7 +306,7 @@ def _run(seed, dataset_name, sample_size, dataset_path=None, freeze_backbone=Tru
         history['test_loss'].append(epoch_test_loss)
 
         # Log evolution
-        logger(f'log/baseline_vit_evo_{day}.csv',
+        logger(os.path.join(LOG_DIR, f'baseline_vit_evo_{day}.csv'),
                generation=epoch,
                timing=0,
                run_info=[dataset_full, epoch_train_loss, epoch_val_loss, epoch_test_loss],
@@ -335,7 +341,7 @@ def _run(seed, dataset_name, sample_size, dataset_path=None, freeze_backbone=Tru
     mcc = binarized_mcc()(y_test_np, y_pred)
 
     # Log final results
-    logger(f'log/baseline_vit_{day}.csv',
+    logger(os.path.join(LOG_DIR, f'baseline_vit_{day}.csv'),
            generation=1000,
            timing=end_time - start_time,
            run_info=[dataset_full, rmse, bce, mcc],

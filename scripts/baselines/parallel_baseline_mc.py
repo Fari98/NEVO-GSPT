@@ -1,12 +1,17 @@
-from baseline import _run, loaders, seeds, resnet_versions, sample_sizes
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+
+from baseline_mc import _run, loaders, seeds, resnet_versions, sample_sizes
 from joblib import Parallel, delayed
 import pandas as pd
-import os
 from datetime import datetime
 
 now = datetime.now()
 day = now.strftime("%Y%m%d")
-log_path = f'log/baseline_dropout_{day}.csv'
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+log_path = os.path.join(LOG_DIR, f'baseline_mc_{day}.csv')
 
 
 def get_completed_dataset_seeds():
@@ -31,7 +36,7 @@ def get_completed_dataset_seeds():
 
 def is_task_completed(loader, version, size):
     """Check if a dataset combination has already been computed"""
-    dataset_name = loader.__name__.split("load_")[-1] + '_' + version + '_' + str(size)
+    dataset_name = loader.__name__.split("load_")[-1] + '_' + version + '_' + str(size) + '_cross_entropy'
     return dataset_name in completed_tasks
 
 
@@ -42,20 +47,16 @@ def generate_tasks():
             for size in sample_sizes:
                 # Skip if this dataset combination is already completed
                 if not is_task_completed(loader, version, size):
-                    for seed in range(10,30): #todo range(10, 30)
-
-
-
-
-
-
-
-
+                    for seed in range(seeds):
                         yield (seed, loader, version, size)
 
 
 # Load completed dataset combinations
 completed_tasks = get_completed_dataset_seeds()
+
+print(f"Running parallel baseline for multiclass classification")
+print(f"Completed tasks: {len(completed_tasks)}")
+print(f"Tasks to run: {sum(1 for _ in generate_tasks())}")
 
 # Execute all tasks in parallel
 _ = Parallel(n_jobs=-1)(
@@ -67,3 +68,4 @@ _ = Parallel(n_jobs=-1)(
     ) for seed, loader, version, size in generate_tasks()
 )
 
+print("All tasks completed!")

@@ -1,3 +1,9 @@
+import sys, os
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_here, '..', '..'))
+sys.path.insert(0, _here)
+LOG_DIR = os.path.join(_here, '..', '..', 'log')
+
 from NeuralNetwork.utils import create_network
 from NeuralNetwork.NeuralNetwork import NeuralNetwork
 from datasets.data_loader_resnet import *
@@ -250,7 +256,7 @@ def _run(seed, loader, resnet_v, sample_size):
 
     for epoch, (train_loss, val_loss, test_loss) in enumerate(zip(net.history["train_loss"], net.history["val_loss"], net.history["test_loss"])):
 
-        logger(f'log/baseline_dropout_evo_{day}.csv',
+        logger(os.path.join(LOG_DIR, f'baseline_dropout_evo_{day}.csv'),
                generation=epoch,
                timing=0,
                run_info=[dataset , train_loss, val_loss, test_loss],
@@ -258,7 +264,7 @@ def _run(seed, loader, resnet_v, sample_size):
 
     y_pred = net.forward(X_test).flatten()
 
-    logger(f'log/baseline_dropout_{day}.csv',
+    logger(os.path.join(LOG_DIR, f'baseline_dropout_{day}.csv'),
            generation=2000,
            timing = end - start,
            run_info = [dataset , binarized_rmse()(y_test, y_pred), binarized_bce()(y_test, y_pred),  binarized_mcc()(y_test, y_pred)],
